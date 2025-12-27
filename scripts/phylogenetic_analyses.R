@@ -3,7 +3,6 @@
 
 #Set up
 rm(list = ls())
-
 set.seed(123)
 setwd("~/Dropbox/Yale/Research/Chapter1") #change
 
@@ -229,15 +228,11 @@ ggplot(df_tree, aes(x = LH, y = bio11_mean, color = LH)) +
   geom_jitter(width = 0.15, size = 2, alpha = 0.8) +
   scale_color_manual(values = life_history_colors) +
   theme_minimal(base_size = 14) +
-  labs(
-    x = "Life History",
-    y = "Mean Annual Precipitation (bio11)",
-    color = "Life History"
-  ) +
-  theme(
-    legend.position = "none",
-    panel.grid.minor = element_blank()
-  )
+  labs(x = "Life History",
+       y = "Mean Annual Precipitation (bio11)",
+       color = "Life History") +
+  theme(legend.position = "none",
+        panel.grid.minor = element_blank())
 
 
 ###PGLS
@@ -250,13 +245,11 @@ trim_tree_nodeless <- trim_tree
 trim_tree_nodeless$node.label <- NULL
 
 #prep comparative data
-comp_data <- comparative.data(
-  phy = trim_tree_nodeless,
-  data = df_tree_rownames,
-  names.col = "species",
-  vcv = TRUE,
-  na.omit = FALSE
-)
+comp_data <- comparative.data(phy = trim_tree_nodeless,
+                              data = df_tree_rownames,
+                              names.col = "species",
+                              vcv = TRUE,
+                              na.omit = FALSE)
 
 #convert life history to numeric (Annual = 0, Perennial = 1)
 comp_data$data$LH_numeric <- ifelse(comp_data$data$life_history == "Perennial", 1, 0)
@@ -289,13 +282,11 @@ for (trait in continuous_traits) {
   temp_df <- na.omit(temp_df)
   
   #match tree to data
-  temp_comp <- comparative.data(
-    phy = trim_tree_nodeless,
-    data = temp_df,
-    names.col = "species",
-    vcv = TRUE,
-    na.omit = FALSE
-  )
+  temp_comp <- comparative.data(phy = trim_tree_nodeless,
+                                data = temp_df,
+                                names.col = "species",
+                                vcv = TRUE,
+                                na.omit = FALSE)
   
   #build model formula dynamically
   model_formula <- as.formula(paste(trait, "~ LH_numeric"))
@@ -335,10 +326,8 @@ write.csv(results_df, "PGLS_results.csv")
 
 #apply FDR correction to raw p-values
 results_df <- results_df %>%
-  mutate(
-    p_value_fdr = p.adjust(p_value, method = "fdr"),
-    significant = p_value_fdr < 0.05
-  )
+  mutate(p_value_fdr = p.adjust(p_value, method = "fdr"),
+         significant = p_value_fdr < 0.05)
 
 #view top results
 head(results_df[order(results_df$p_value_fdr), ])
@@ -362,12 +351,10 @@ View(trait_matrix)
 
 #run MCMC
 set.seed(111)
-tb_result_bio11 <- threshBayes(
-  tree = trim_tree_nodeless,
-  X = trait_matrix,
-  types = c("disc", "cont"),
-  ngen = 2e6
-)
+tb_result_bio11 <- threshBayes(tree = trim_tree_nodeless,
+                               X = trait_matrix,
+                               types = c("disc", "cont"),
+                               ngen = 2e6)
 
 #plot posterior distribution of correlation
 plot(tb_result_bio11)
@@ -470,10 +457,8 @@ pseudo_r2 <- 1 - (rss_reg / rss_null)
 
 #ancestral states (OU)
 ou_ancestral_states <- fit_ou$anc.reconstruction
-trait_combined <- c(
-  setNames(df_tree_rownames_true[[trait]], rownames(df_tree_rownames_true)), # tips
-  ou_ancestral_states # nodes
-)
+trait_combined <- c(setNames(df_tree_rownames_true[[trait]], rownames(df_tree_rownames_true)), # tips
+                    ou_ancestral_states # nodes)
 
 #plot trait evolution
 trait_map <- contMap(trim_tree_nodeless, trait_combined, plot = FALSE)
@@ -487,16 +472,9 @@ trait_map <- setMap(trait_map, colors <- rev(viridis::viridis(100)))
 trait_map <- setMap(trait_map, colors = colorRampPalette(c("#4D2600", "#D2B48C", "#F5F5DC"))(100))
 
 plot(trait_map, legend = FALSE, fsize = 0.7, lwd = 4, outline = FALSE)
-add.color.bar(
-  10, trait_map$cols,
-  title = paste(trait),
-  lims = trait_map$lims,
-  digits = 1,
-  prompt = FALSE,
-  x = 2, y = 50,
-  lwd = 5, fsize = 0.8,
-  outline = FALSE
-)
+add.color.bar(10, trait_map$cols, title = paste(trait),
+              lims = trait_map$lims, digits = 1, prompt = FALSE,
+              x = 2, y = 50, lwd = 5, fsize = 0.8, outline = FALSE)
 
 tip_states <- lh_trait[trim_tree_nodeless$tip.label]
 tip_colors <- ifelse(tip_states == 0, "#E41A1C", "#377EB8")
