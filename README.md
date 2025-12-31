@@ -1,5 +1,5 @@
 # Cistantheae ddRAD phylogeny project github page
-##### Anri Chomentowska, 2025
+#### Anri Chomentowska, 2025
 
 Manuscript published: https://doi.org/10.1093/aob/mcaf319
 Title: Phylogenomic analyses of the diverse desert–alpine plant lineage Cistantheae
