@@ -1,4 +1,4 @@
-Cistantheae wide trees:
+Cistantheae-wide trees:
   FINAL_v14_updated_name_NEW2.tree (main tree)
   FINAL_v14_trimmed.tree (trimmed one sample per species)
   FINAL_v14_time_cleanname.tree (time calibrated trimmed)
